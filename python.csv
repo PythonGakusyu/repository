@@ -1,0 +1,5 @@
+VM名,搭載ESXi名
+centos-1-g2,test-esxi.localdomain
+centos-100-g1,test-esxi.localdomain
+ESXi,test-esxi.localdomain
+centos-1-g1,test-esxi.localdomain
