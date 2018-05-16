@@ -8,10 +8,8 @@ def main():
 	logger = vm_module.logger_format()
 	# parserメソッド
 	args = vm_module.set_args()
-	# インスタンス作成
-	si_info = vm_module(args.host, args.username, args.password)
 	# 接続メソッド
-	si = si_info.si_connect()
+	si = vm_module.si_connect(args.host, args.username, args.password)
 
 	vm_list = si.content.viewManager.CreateContainerView(si.content.rootFolder,
 													 [vim.VirtualMachine],
