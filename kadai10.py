@@ -18,6 +18,7 @@ def main():
 	# csvファイル出力のヘッダーリストと空のセット
 	header = [('VMNAME', 'ESXi')]
 	rows = set()
+	#rows =[]
 	
 	# csvファイルへの出力
 	csv_file = open('./python.csv', 'w', newline = '')
@@ -29,6 +30,8 @@ def main():
 			class_name = vim.vm.device.VirtualVmxnet3
 			if isinstance(device, class_name) and device.connectable.connected == False:
 				rows.add((vm.name, vm.runtime.host.name))
+				#if (vm.name, vm.runtime.host.name) not in rows:
+					#rows.append((vm.name, vm.runtime.host.name))
 	# 書き込み
 	writer.writerows(rows)
 
