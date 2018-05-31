@@ -22,7 +22,7 @@ def main():
 			PSWD = args.ssh_password
 			
 			if HOST is None:
-				logger.info('VMにIPアドレスが設定されていません')
+				logger.info('{:<15}'.format(vm.name) + 'VMにIPアドレスが設定されていません')
 				continue
 
 			ssh = paramiko.SSHClient()
@@ -32,11 +32,11 @@ def main():
 			stdin, stdout, stderr = ssh.exec_command('hostname')
  
 			for line in stdout:
-				print(line.strip('\n'))
+				print('{:<15}'.format(vm.name) + line.strip('\n'))
 
 			ssh.close()
 		else:
-			logger.info('VMの電源が入っていません')
+			logger.info('{:<15}'.format(vm.name) + 'VMの電源が入っていません')
 
 if __name__ == '__main__':
 	main()
