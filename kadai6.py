@@ -35,6 +35,20 @@ class vm_module:
         parser.add_argument('-u', '--username', help='usernameを入力してください', required=True)
         parser.add_argument('-p', '--password', help='passwordを入力してください', required=True)
         return parser.parse_args()
+    
+    def set_args_paramiko():
+        parser = argparse.ArgumentParser(
+            prog='kadai3.py',
+            usage='～.py IPアドレス, username, password',
+            description='Please sign in',
+            epilog='end',
+            add_help=True)
+        parser.add_argument('-hn', '--host', help='hostのIPを入力してください', required=True)
+        parser.add_argument('-u', '--username', help='usernameを入力してください', required=True)
+        parser.add_argument('-p', '--password', help='passwordを入力してください', required=True)
+        parser.add_argument('-su', '--ssh_username', help='ssh接続のusernameを入力してください', required=True)
+        parser.add_argument('-sp', '--ssh_password', help='ssh接続のpasswordを入力してください', required=True)
+        return parser.parse_args()
 
         # コンストラクタ
 #   def __init__(self, host, username, password):
