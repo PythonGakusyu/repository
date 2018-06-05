@@ -65,7 +65,7 @@ def get_ip(vm,logger):
 		i = 0
 		while vm.summary.guest.ipAddress is None and i < 3:
 			logger.info('%sのIPアドレスを取得しています' % vm.name)
-			time.sleep(5)
+			time.sleep(60)
 			i = i +1
 		if vm.summary.guest.ipAddress is not None:
 			return True
