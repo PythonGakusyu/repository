@@ -11,7 +11,6 @@ import logging
 class vm_module:
 
     # loggerフォーマットメソッド
-    @staticmethod
     def logger_format():
         logger = logging.getLogger(__name__)
         logger.setLevel(logging.INFO)
@@ -23,7 +22,6 @@ class vm_module:
         return logger
 
     # parserメソッド
-    @staticmethod
     def set_args():
         parser = argparse.ArgumentParser(
             prog='kadai3.py',
@@ -34,6 +32,21 @@ class vm_module:
         parser.add_argument('-hn', '--host', help='hostのIPを入力してください', required=True)
         parser.add_argument('-u', '--username', help='usernameを入力してください', required=True)
         parser.add_argument('-p', '--password', help='passwordを入力してください', required=True)
+        return parser.parse_args()
+
+    # ssh接続用parserメソッド
+    def set_args_paramiko():
+        parser = argparse.ArgumentParser(
+            prog='kadai3.py',
+            usage='～.py IPアドレス, username, password',
+            description='Please sign in',
+            epilog='end',
+            add_help=True)
+        parser.add_argument('-hn', '--host', help='hostのIPを入力してください', required=True)
+        parser.add_argument('-u', '--username', help='usernameを入力してください', required=True)
+        parser.add_argument('-p', '--password', help='passwordを入力してください', required=True)
+        parser.add_argument('-su', '--ssh_username', help='ssh接続のusernameを入力してください', required=True)
+        parser.add_argument('-sp', '--ssh_password', help='ssh接続のpasswordを入力してください', required=True)
         return parser.parse_args()
 
         # コンストラクタ
@@ -62,7 +75,6 @@ class vm_module:
 
 
     # 接続メソッド
-    @staticmethod
     def si_connect(host, username, password):
         context = None
         if hasattr(ssl, '_create_unverified_context'):
@@ -75,6 +87,13 @@ class vm_module:
 
         atexit.register(Disconnect, si)
         return si
+
+	# CreateContainerViewメソッド
+    def CreateContainerView(si,objtype):
+        obj_list = si.content.viewManager.CreateContainerView(si.content.rootFolder,
+                                                              [objtype],
+                                                              True)
+        return obj_list
 
     # オブジェクト取得メソッド
     def search_object(si, objecttype, objectname):
@@ -96,3 +115,4 @@ class vm_module:
             return True
         else:
             return False
+
