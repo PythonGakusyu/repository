@@ -47,6 +47,7 @@ class vm_module:
         parser.add_argument('-p', '--password', help='passwordを入力してください', required=True)
         parser.add_argument('-su', '--ssh_username', help='ssh接続のusernameを入力してください', required=True)
         parser.add_argument('-sp', '--ssh_password', help='ssh接続のpasswordを入力してください', required=True)
+        parser.add_argument('-c', '--command', help='commandを入力してください', required=True)
         return parser.parse_args()
 
         # コンストラクタ
