@@ -17,12 +17,20 @@ def main():
 	# CreateContainerViewメソッド 
 	vm_list = vm_module.CreateContainerView(si, vim.VirtualMachine)
 
+	USER = args.ssh_username
+	PSWD = args.ssh_password
+	command = args.command
+
 	logger.info('開始します')
 	logger.info('-------------------------------------------')
 	for vm in vm_list.view:
 		# IP取得メソッド
-		get_id(vm,logger)
-		if vm.summary.guest.ipAddress is None:
+		ip_result = get_ip(vm,logger)
+		# IP取得の結果判定
+		if ip_result is True:
+			logger.info('%sのIPアドレスの取得成功' % vm.name)
+			logger.info('')
+		else:
 			logger.info('%sのIPアドレスの取得失敗' % vm.name)
 			logger.info('')
 			logger.info('%sへのSSH接続をスキップします' % vm.name)
@@ -31,19 +39,21 @@ def main():
 		
 		# 値を代入
 		HOST = vm.summary.guest.ipAddress
-		USER = args.ssh_username
-		PSWD = args.ssh_password
 		
 		# SSH接続メソッド
-		result = connect_ssh(HOST,USER,PSWD,'hostname',logger, vm)
-
+		ssh  = connect_ssh(HOST,USER,PSWD,logger,vm)
+		# 接続結果がFalseの場合passして終了
+		if ssh is False:
+			pass
+		else:
+			result = check_command(ssh,command,logger,vm)
 
 
 
 
 
 # IP取得メソッド
-def get_id(vm,logger):
+def get_ip(vm,logger):
 	if vm.runtime.powerState == 'poweredOff':
 		vm.PowerOnVM_Task()
 		logger.info(vm.name + 'の電源をONにしました！')
@@ -55,37 +65,47 @@ def get_id(vm,logger):
 		i = 0
 		while vm.summary.guest.ipAddress is None and i < 3:
 			logger.info('%sのIPアドレスを取得しています' % vm.name)
-			time.sleep(60)
+			time.sleep(5)
 			i = i +1
 		if vm.summary.guest.ipAddress is not None:
-			logger.info('%sのIPアドレスの取得成功' % vm.name)
-			logger.info('')
-	
+			return True
+		else:
+			return False
+
 
 # ssh接続メソッド
-def connect_ssh(HOST,USER,PSWD,command,logger,vm):
+def connect_ssh(HOST,USER,PSWD,logger,vm,):
 	try:
 		logger.info('SSH接続します...')
 		ssh = paramiko.SSHClient()
 		ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 		ssh.connect(HOST, username=USER, password=PSWD)
-		stdin, stdout, stderr = ssh.exec_command(command)
 	except SSHException as e:
 		logger.info(e)
 		logger.info('接続に失敗しました')
 		logger.info('%sへのSSH接続でエラーが発生したのでスキップします' % vm.name)
 		logger.info('-------------------------------------------')
-	# 例外処理が起きなかったら出力
+		return False
 	else:
 		logger.info('接続に成功しました')
-		if vm.summary.guest.ipAddress is not None:
-			for line in stdout:
-				logger.info('{:<15}'.format(vm.name) + line.strip('\n'))
-				logger.info('-------------------------------------------')
-				ssh.close()
+		return ssh
 
 
+# commandチェックメソッド
+def check_command(ssh,command,logger,vm):
+	stdin, stdout, stderr = ssh.exec_command(command)
+	
+	# どちらにもオブジェクトは入ってるので、テキスト内容で比較
+	out = stdout.readline()
+	err = stderr.readline()
 
-			
+	if out != '':
+		logger.info('{:<15}'.format(vm.name) + out.strip('\n'))
+		logger.info('-------------------------------------------')
+	elif err != '':
+		logger.info('コマンド入力でエラーが発生しました')
+		logger.info('{:<15}'.format('エラー内容') + err.strip('\n'))
+		logger.info('-------------------------------------------')
+	
 if __name__ == '__main__':
 	main()
