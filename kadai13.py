@@ -50,8 +50,6 @@ def main():
 
 
 
-
-
 # IP取得メソッド
 def get_ip(vm,logger):
 	if vm.runtime.powerState == 'poweredOff':
