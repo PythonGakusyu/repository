@@ -18,14 +18,12 @@ def check_ip(ip):
 	g_class_C1 = '(^(192)\.([0-9]|[1-9][0-9]|1[0-5][0-9]|16[0-7])\.([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$)'
 	g_class_C2 = '(^(19[2-9]|2[0-1][0-9]|22[0-3])\.(1[6-9][0-9]|2[0-4][0-9]|25[0-5])\.([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$)'
 	global_ip = g_class_A1 + '|' + g_class_A2 + '|' + g_class_B1 + '|' + g_class_B2 + '|' + g_class_C1 + '|' + g_class_C2
-	if ip is None:
-	    return False
 	if re.search(private_ip, ip):
 	    return 'private'
 	elif re.search(global_ip, ip):
 	    return 'global'
 	else:
-	    return 'ipアドレスではありません'
+	    return False
 
 if __name__ == '__main__':
 	main()
